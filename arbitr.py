@@ -18,6 +18,8 @@ def get_searches(filename):
 	searches = []
 	for i in df.index:
 		row = df.iloc[i]
+		if pd.isna(row['ИНН']):
+			continue
 		searches.append(int(row['ИНН']))
 	return searches
 

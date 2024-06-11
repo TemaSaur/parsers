@@ -1,15 +1,15 @@
-import traceback
-
 from selenium.webdriver import Firefox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
+from datetime import datetime
 
 url = 'https://bankrot.fedresurs.ru/bankrupts?searchString={}'
 
 # searches = ['Вахрушев', 'Лох']
-input_filename = 'input.xlsx'
+import sys
+input_filename = sys.argv[1]
 
 
 def get_searches(filename):

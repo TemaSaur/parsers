@@ -118,4 +118,4 @@ if __name__ == "__main__":
 	finds = get_finds(driver)
 	searches = get_searches(input_filename)
 	search_searches(searches)
-	pd.DataFrame(data).to_excel('haha.xlsx')
+	pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')

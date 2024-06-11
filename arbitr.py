@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium_stealth import stealth
 import pandas as pd
 from time import sleep
+from datetime import datetime
 import sys
 
 url = 'https://kad.arbitr.ru'
@@ -75,9 +76,9 @@ def add_info(inn, res):
 def search_searches(searches):
 	for search in searches:
 		get_search(search)
-		sleep(.2)
+		sleep(.5)
 		click_bankruptcy()
-		sleep(.2)
+		sleep(1)
 		el = wait_clickable('.b-results', '.b-noResults')
 		add_info(search, el.text.startswith('Дело'))
 
@@ -99,4 +100,4 @@ if __name__ == "__main__":
 	searches = get_searches(input_filename)
 	search_searches(searches)
 	print([x['Нашелся'] for x in data])
-	pd.DataFrame(data).to_excel('hahas.xlsx')
+	pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')

@@ -40,7 +40,7 @@ def get_search(search):
 
 
 def wait_for(selector):
-	return WebDriverWait(driver, 10).until(
+	return WebDriverWait(driver, 20).until(
 		EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
 
 
@@ -112,10 +112,16 @@ def search_searches(searches):
 
 
 if __name__ == "__main__":
-	driver = Firefox()
-	driver.get(url)
-	find = get_find(driver)
-	finds = get_finds(driver)
-	searches = get_searches(input_filename)
-	search_searches(searches)
-	pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+	try:
+		driver = Firefox()
+		driver.get(url)
+		find = get_find(driver)
+		finds = get_finds(driver)
+		searches = get_searches(input_filename)
+		search_searches(searches)
+		pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+	except:
+		import traceback
+		print(traceback.format_exc())
+		print('Что-то пошло не так. Сохраняю что получилось')
+		pd.DataFrame(data).to_excel(f'../arbitr/failed_{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')

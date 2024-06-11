@@ -100,6 +100,11 @@ if __name__ == "__main__":
 	find = get_find(driver)
 	finds = get_finds(driver)
 	searches = get_searches(input_filename)
-	search_searches(searches)
-	print([x['Нашелся'] for x in data])
-	pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+	try:
+		search_searches(searches)
+		pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+	except:
+		import traceback
+		print(traceback.format_exc())
+		pd.DataFrame(data).to_excel(f'../arbitr/failed-{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+

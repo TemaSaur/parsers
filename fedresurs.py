@@ -107,7 +107,7 @@ def search_searches(searches):
 					card).text
 				get_info(i, status)
 		except:
-			data.append({'Поиск №': i, 'Поиск': f'{search} не найдено'})
+			data.append({'Поиск №': i, 'Поиск': search, 'Статус': 'Не найдено'})
 		i += 1
 
 
@@ -119,9 +119,9 @@ if __name__ == "__main__":
 		finds = get_finds(driver)
 		searches = get_searches(input_filename)
 		search_searches(searches)
-		pd.DataFrame(data).to_excel(f'../arbitr/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+		pd.DataFrame(data).to_excel(f'../fedresurs/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
 	except:
 		import traceback
 		print(traceback.format_exc())
 		print('Что-то пошло не так. Сохраняю что получилось')
-		pd.DataFrame(data).to_excel(f'../arbitr/failed_{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+		pd.DataFrame(data).to_excel(f'../fedresurs/failed_{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')

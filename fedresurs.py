@@ -107,7 +107,7 @@ def search_searches(searches):
 					card).text
 				get_info(i, status)
 		except:
-			data.append({'Поиск №': i, 'Поиск': search, 'Статус': 'Не найдено'})
+			data.append({'Поиск №': i, 'Поиск': int(search), 'Статус': 'Не найдено'})
 		i += 1
 
 

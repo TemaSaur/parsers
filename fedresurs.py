@@ -4,12 +4,13 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 from datetime import datetime
+from time import sleep
 
 url = 'https://bankrot.fedresurs.ru/bankrupts?searchString={}'
 
 # searches = ['Вахрушев', 'Лох']
 import sys
-input_filename = sys.argv[1]
+input_filename = 's.xlsx'
 
 
 def get_searches(filename):
@@ -62,34 +63,25 @@ def get_finds(driver):
 	return finds
 
 
-def get_info(i, status):
+def get_info(i):
 	driver.switch_to.window(driver.window_handles[1])
-	info = wait_for('.card .container .info')
-	name = find('.subject h2').text
+	wait_for('.headertext')
+	content = wait_for('.information-content')
+	name = find('.headertext').text
+	print(name)
+	person = {'Поиск №': i, 'ФИО': name}
 
-	person = {'Поиск №': i, 'ФИО': name, 'Статус': status}
-
-	personal = find('app-person-info', info).text
-	person |= {
-		k: v for k, v in
-		zip([x for i, x in enumerate(personal.split('\n')) if i % 2 == 0],
-			[x for i, x in enumerate(personal.split('\n')) if i % 2 == 1])
-	}
-
+	# so that it closes correctly
 	try:
-		find('legal-case-list:has(.bankrot_case) .toggle .open_expand_form',
-			 info).click()
-
-		person |= {
-			k: v
-			for k, v in zip(['Дело', 'Суд', 'Заявитель'],
-							find('.bankrot_case', info).text.split('\n')[1:])
-		}
+		sleep(.5)
+		for k in ['ИНН', 'Дата рождения', 'Место рождения', 'Место проживания']:
+			person[k] = content.find_element(By.XPATH, f'//div[contains(text(), "{k}")]/..').text.split('\n')[1]
+		thing = wait_for('.info-item-name_properties')
+		person['Номер дела'], person['Статус'] = thing.text.split('\n')
 	except:
 		pass
 
 	data.append(person)
-
 	driver.close()
 	driver.switch_to.window(driver.window_handles[0])
 
@@ -102,11 +94,13 @@ def search_searches(searches):
 			switch_phys()
 			for card in finds('app-bankrupt-result-card-person .u-card-result'):
 				card.click()
-				status = find(
-					'.d-flex .u-card-result__value.u-card-result__value_item-property',
-					card).text
-				get_info(i, status)
+				# status = find(
+				# 	'.d-flex .u-card-result__value.u-card-result__value_item-property',
+				# 	card).text
+				get_info(i)
 		except:
+			import traceback
+			print(traceback.format_exc())
 			data.append({'Поиск №': i, 'Поиск': search, 'Статус': 'Не найдено'})
 		i += 1
 
@@ -119,9 +113,9 @@ if __name__ == "__main__":
 		finds = get_finds(driver)
 		searches = get_searches(input_filename)
 		search_searches(searches)
-		pd.DataFrame(data).to_excel(f'../fedresurs/{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+		pd.DataFrame(data).to_excel(f'{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
 	except:
 		import traceback
 		print(traceback.format_exc())
 		print('Что-то пошло не так. Сохраняю что получилось')
-		pd.DataFrame(data).to_excel(f'../fedresurs/failed_{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+		pd.DataFrame(data).to_excel(f'failed_{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')

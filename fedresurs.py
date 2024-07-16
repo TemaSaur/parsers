@@ -10,7 +10,8 @@ url = 'https://bankrot.fedresurs.ru/bankrupts?searchString={}'
 
 # searches = ['Вахрушев', 'Лох']
 import sys
-input_filename = 's.xlsx'
+input_filename = 'input.xlsx'
+#input_filename = sys.argv[1]
 
 
 def get_searches(filename):
@@ -73,10 +74,13 @@ def get_info(i):
 
 	# so that it closes correctly
 	try:
+		print('f')
 		sleep(.5)
 		for k in ['ИНН', 'Дата рождения', 'Место рождения', 'Место проживания']:
 			person[k] = content.find_element(By.XPATH, f'//div[contains(text(), "{k}")]/..').text.split('\n')[1]
+		print('h')
 		thing = wait_for('.info-item-name_properties')
+		print('k')
 		person['Номер дела'], person['Статус'] = thing.text.split('\n')
 	except:
 		pass
@@ -93,10 +97,11 @@ def search_searches(searches):
 		try:
 			switch_phys()
 			for card in finds('app-bankrupt-result-card-person .u-card-result'):
+				driver.execute_script("arguments[0].scrollIntoView();", card)
 				card.click()
 				# status = find(
-				# 	'.d-flex .u-card-result__value.u-card-result__value_item-property',
-				# 	card).text
+				# 	'.d-flex .u-card-result__value.u-card-result__value_item-property',
+				# 	card).text
 				get_info(i)
 		except:
 			import traceback
@@ -108,7 +113,7 @@ def search_searches(searches):
 if __name__ == "__main__":
 	try:
 		driver = Firefox()
-		driver.get(url)
+		driver.get(url.format(''))
 		find = get_find(driver)
 		finds = get_finds(driver)
 		searches = get_searches(input_filename)
@@ -119,3 +124,4 @@ if __name__ == "__main__":
 		print(traceback.format_exc())
 		print('Что-то пошло не так. Сохраняю что получилось')
 		pd.DataFrame(data).to_excel(f'failed_{datetime.today().strftime("%y%m%d%H%M%S")}.xlsx')
+
